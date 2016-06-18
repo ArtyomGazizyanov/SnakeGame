@@ -10,7 +10,7 @@
     var fps = 0;
     var backgroundColor = "#fff"
     var backgroundColorWall = "#000"
-    
+    var firststartgame = true;
     var initialized = false;
     
     // Images
@@ -209,7 +209,8 @@
         canvas.addEventListener("mousedown", onMouseDown);
         
         // Add keyboard events
-        document.addEventListener("keydown", onKeyDown);
+        document.addEventListener("keydown", onKeyDown);        
+        
         
         // New game
         newGame();
@@ -225,6 +226,10 @@
         {
             newGame();
             gameover = false;
+            if (firststartgame)
+            {
+                firststartgame = false;
+            }
         }
     }
     
@@ -436,30 +441,37 @@
     // Render the game
     function render() 
     {
-        // Draw background
-        context.fillStyle = backgroundColor;
-        context.fillRect(0, 60, canvas.width, canvas.height);
+        
         
         drawLevel();
         drawSnake();
-        drawScore(score);    
+        drawScore(score);        
+        
         //Game over
         if (gameover)
-        {
+        {            
             context.fillStyle = "rgba(0, 0, 0, 0.5)";
             context.fillRect(0, 0, canvas.width, canvas.height);
             
-            context.fillStyle = backgroundColor;
-            context.fillStyle = "#E8000C";
-            context.font = "45px Verdana";
-            drawCenterText("Sorry you died", 0, canvas.height/4, canvas.width);
-            context.fillStyle = "#00F";
-            //context.fillText("SCORE: " + score, 35, 50);
-            drawCenterText("SCORE: " + score, 0, 2*canvas.height/4, canvas.width);
-            context.fillStyle = "#fff";
-            context.font = "24px Verdana";
-            drawCenterText("Press any key to start!", 0, 3*canvas.height/4, canvas.width);
-            
+            if (firststartgame)
+            {
+                context.fillStyle = "#fff";
+                context.font = "40px Verdana";
+                drawCenterText("Press any key", 0, canvas.height/2, canvas.width);
+                drawCenterText("When you are ready to start", 0, canvas.height/1.7, canvas.width);
+            } else
+            {            
+                context.fillStyle = backgroundColor;
+                context.fillStyle = "#E8000C";
+                context.font = "45px Verdana";
+                drawCenterText("Sorry you died", 0,     canvas.height/4, canvas.width);
+                context.fillStyle = "#00F";
+                //context.fillText("SCORE: " + score, 35, 50);
+                drawCenterText("SCORE: " + score, 0,    2*canvas.height/4, canvas.width);
+                context.fillStyle = "#fff";
+                context.font = "24px Verdana";
+                drawCenterText("Press any key to start!", 0,    3*canvas.height/4, canvas.width);
+            }            
         }
     }
     
@@ -671,7 +683,8 @@
     }
     
     // Call init to start the game
-    init();
+       init();
+    
 };
 
 window.onload = function()

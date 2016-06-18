@@ -1,4 +1,4 @@
-<?php
+    <?php
     function last($str)
     {   
        $lastChar = substr($str, strlen($str) - 1);

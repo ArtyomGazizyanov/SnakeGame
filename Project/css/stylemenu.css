@@ -1,0 +1,62 @@
+@font-face
+{
+    font-family: Lasco-Bold; /* Гарнитура шрифта */
+    src: url(fonts/Lasco-Bold.otf); /* Для IE5-8 */
+    src: local(Lasco-Bold), url(fonts/Lasco-Bold.ttf); /* Для остальных браузеров */
+}
+
+a 
+{ 
+    text-decoration: none; /* Отменяем подчеркивание у ссылки */
+    color: black;
+} 
+
+
+a:visited
+{
+    color: black;
+}
+
+
+
+.header_itle
+{
+    text-transform: uppercase;
+    font-size: 283%;
+}
+
+.container
+{
+    font-family: Lasco-Bold;
+    margin: auto;
+    padding-bottom: 9%;
+    border: 3px solid black;
+    border-radius: 50px;
+    text-align: center;
+    width: 39%;
+}
+
+
+#onePlayer, 
+#twoPlayer,
+#leaderBoard
+{
+    font-family: Lasco-Bold;
+    font-size: 16pt;
+    border: 3px solid black;
+    border-radius: 50px;
+    width: 155px;
+    padding: 22px;
+    margin: 51px auto 0 auto;
+}
+
+#onePlayer:hover, 
+#twoPlayer:hover,
+#leaderBoard:hover
+{
+    background-color: black;
+    color: red;
+    cursor: pointer;
+}
+
+

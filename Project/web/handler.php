@@ -1,12 +1,11 @@
 <?php
-   require_once('../include/string.inc.php');
-   if (isset($_GET['username']))
+if (isset($_GET['username']))
     {
-        
-        $username = $_GET['username'];
+        $str = $_GET['username'];
+        echo('Your password: ' . $str . '<br />');         
     }
     else
     {
-        alert('You wrote nothing');
+       echo('Pasword not found');
     }
 ?>
