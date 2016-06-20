@@ -2,7 +2,9 @@
     // Get the canvas and context
     var canvas = document.getElementById("canvas"); 
     var context = canvas.getContext("2d");
-    
+        
+    context.font = '68px Lasco-Boldr';
+        
     // Timing and frames per second
     var lastframe = 0;
     var fpstime = 0;
@@ -432,7 +434,7 @@
     function drawScore(score)
     {
         context.fillStyle = backgroundColor;
-        context.font = "24px Verdana";
+        context.font = "24px Lasco-Bold";
         context.fillStyle = "#00F";
         context.fillText("SCORE: " + score, 35, 50);
     }
@@ -456,20 +458,19 @@
             if (firststartgame)
             {
                 context.fillStyle = "#fff";
-                context.font = "40px Verdana";
+                context.font = "40px Lasco-Bold";
                 drawCenterText("Press any key", 0, canvas.height/2, canvas.width);
                 drawCenterText("When you are ready to start", 0, canvas.height/1.7, canvas.width);
             } else
             {            
                 context.fillStyle = backgroundColor;
                 context.fillStyle = "#E8000C";
-                context.font = "45px Verdana";
+                context.font = "45px Lasco-Bold";
                 drawCenterText("Sorry you died", 0,     canvas.height/4, canvas.width);
                 context.fillStyle = "#00F";
-                //context.fillText("SCORE: " + score, 35, 50);
                 drawCenterText("SCORE: " + score, 0,    2*canvas.height/4, canvas.width);
                 context.fillStyle = "#fff";
-                context.font = "24px Verdana";
+                context.font = "24px Lasco-Bold";
                 drawCenterText("Press any key to start!", 0,    3*canvas.height/4, canvas.width);
             }            
         }

@@ -10,7 +10,7 @@
       <h1 class="header_itle">welcome to the snake</h1>  
       <form action="web/handler.php">
         <label><p class="input_playername_label">Name of a hero</p> 
-          <input id="playerName" name="username" placeholder="Your name" type="text" /> 
+          <input id="playerName" name="username" pattern="[a-zA-Zа-яА-ЯёЁ]{2,64}" required title="allowed only letters and numbers" type="text" /> 
         </label>
         <a href="index.html"><p><input class="send_button" type="submit" value="go!"></p> </a>
       </form>

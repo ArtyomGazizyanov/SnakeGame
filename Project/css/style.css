@@ -5,6 +5,7 @@
     src: local(Lasco-Bold), url(fonts/Lasco-Bold.ttf); /* Для остальных браузеров */
 }
 
+
 #playerName
 {
     margin: 0px auto; 
@@ -49,13 +50,6 @@ form
     border-radius:  50px ;
     width: 50%;
 }
-
-/*
-.send_button
-{
-    font-family: Lasco-Bold;    
-}
-*/
 
 .send_button {
   font-family: Lasco-Bold;
