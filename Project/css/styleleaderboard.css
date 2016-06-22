@@ -17,8 +17,6 @@ a:visited
     color: black;
 }
 
-
-
 .header_itle
 {
     text-transform: uppercase;
@@ -29,13 +27,33 @@ a:visited
 {
     font-family: Lasco-Bold;
     margin: auto;
-    padding-bottom: 9%;
+    padding-bottom: 2%;
     border: 3px solid black;
     border-radius: 50px;
     text-align: center;
     width: 39%;
 }
 
+.user_div
+{
+    font-family: Lasco-Bold;
+    font-size: 16pt;
+    border: 3px solid black;
+    border-radius: 50px;
+    width: 155px;
+    padding: 22px;
+    margin: 51px auto 0 auto;
+}
+
+.username
+{
+    text-align: left;
+}
+
+.score
+{
+    text-align: right;
+}
 
 #onePlayer, 
 #twoPlayer,
@@ -50,9 +68,21 @@ a:visited
     margin: 51px auto 0 auto;
 }
 
+th
+{
+    background-color: black;
+    color: red;
+}
+
+table
+{
+    width: 100%;
+}
+
 #onePlayer:hover, 
 #twoPlayer:hover,
-#leaderBoard:hover
+#leaderBoard:hover,
+.back_one_player:hover
 {
     background-color: black;
     color: red;
@@ -60,5 +90,21 @@ a:visited
 }
 
 
+.one_player_header_itle
+{
+    text-transform: uppercase;
+    font-size: 166%;
+}
 
-
+.back_one_player
+{
+    float: left;
+    text-align: center;
+    font-family: Lasco-Bold;
+    font-size: 16pt;
+    border: 3px solid black;
+    border-radius: 50px;
+    width: 75px;
+    padding: 22px;
+    margin: 10px auto 0 auto;
+}

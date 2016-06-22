@@ -38,8 +38,27 @@
         return $data;
     }
     
-    function getLastMysqlData()  // LAST_INSERT_ID()
+    function getLastMysqlData($query)  // LAST_INSERT_ID()
     {
-        $lastID = mysql_insert_id();
-        return $lastID;
+        $array = array(dbQueryGetResult($query));
+        $result = array_pop($array);
+        $result = array_pop($result);
+        $result = array_pop($result); 
+        return $result;
+    } 
+    function getArrayrFromTable($query)  // LAST_INSERT_ID()
+    {
+        $array = array(dbQueryGetResult($query));
+        $result = array_pop($array);         
+        return $result;
     }
+    
+    function countRowsMysql($query)  // LAST_INSERT_ID()
+    {
+        $array = array(dbQueryGetResult($query));
+        $result = array_pop($array);         
+        $result = array_pop($array);        
+        return $result;
+    }
+    
+    

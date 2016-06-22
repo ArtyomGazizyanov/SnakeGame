@@ -1,20 +1,14 @@
 <?php
-    
     require_once('../include/database.inc.php');
     if ((isset($_GET['username'])) &&(dbInitialConnect()))
     {
-        $result = 'fycj';
-        $str = strtoupper ($_GET['username']);        // " . $str . "
-        $result = dbQuery("INSERT INTO `users_info`(`username`) VALUES ('" . $str . "')");
-        //$row = mysql_fetch_array($result);
-        //$result = dbQuery("SELECT MAX(`id`), * `users_info` INTO @result");
-       // $result = dbQuery("SELECT * FROM `users_info` ORDER BY `id` DESC LIMIT 1");
-        //$result = mysql_insert_id();//dbQuery("SELECT * FROM `users_info` ORDER BY `id` DESC LIMIT 1");
-        $array = array(dbQueryGetResult("SELECT MAX(`id`) FROM `users_info`"));
-        //print_r(dbQueryGetResult("SELECT MAX(`id`) FROM `users_info`"));
-        echo current($array);
-        //$name = $row["name"];
-       // echo '___"'.$name.'"___';
+        $username = strtoupper($_GET['username']);
+        dbQuery("INSERT INTO `users_info`(`username`) VALUES ('" . $username . "')");
+        $lastID = getLastMysqlData("SELECT MAX(`id`) FROM `users_info`");        
+        session_start();
+        $_SESSION['UsernameCoockie'] = $username;
+        $_SESSION['IdCoockie'] = $lastID;
+        //print_r($_SESSION);
         include('../startmenu.html');
     }
     else

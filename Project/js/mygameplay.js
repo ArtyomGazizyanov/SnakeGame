@@ -289,6 +289,32 @@
             }
         }
     }
+        
+    function sendScoreAfterDeath(score)
+    {
+        $.ajax(
+        {
+            url: "web/one_player.php?score=" + score + "",          
+            success: function(data){/*console.log(data);*/}
+        });
+        //console.log(score);
+    }
+        
+    function renewScoreAndLeaderPosition(score)
+    {
+        $("#userBestScore").empty();
+        $.ajax(
+        {
+            url: "web/get_best_score_curr_player.php",    
+            success: function(data){$("#userBestScore").append(data);}
+        });
+        $("#leaderTable").empty();
+        $.ajax(
+        {
+            url: "web/rewrite_one_player_leaderboard.php",    
+            success: function(data){$("#leaderTable").append(data);}
+        });
+    }
     
     // Main loop
     function main(tframe) 
@@ -361,6 +387,8 @@
                 {
                     // Collision with a wall
                     gameover = true;
+                    sendScoreAfterDeath(score);
+                    renewScoreAndLeaderPosition(score);
                 }
                 
                 // Collisions with the snake itself
@@ -373,6 +401,8 @@
                     {
                         // Found a snake part
                         gameover = true;
+                        sendScoreAfterDeath(score);
+                        renewScoreAndLeaderPosition(score);
                         break;
                     }
                 }
@@ -405,6 +435,8 @@
             {
                 // Out of bounds
                 gameover = true;
+                sendScoreAfterDeath(score);
+                renewScoreAndLeaderPosition(score);
             }
             
             if (gameover) 
@@ -472,6 +504,7 @@
                 context.fillStyle = "#fff";
                 context.font = "24px Lasco-Bold";
                 drawCenterText("Press any key to start!", 0,    3*canvas.height/4, canvas.width);
+                //sendScoreAfterDeath(score);              
             }            
         }
     }
@@ -628,6 +661,16 @@
         } 
     }
     
+    
+    function CHEATScoreAndLeght(e)
+    {
+        if (e.keyCode == 16) 
+        {
+            snake.grow();
+            score++;
+        }   
+    }
+    
     // Keyboard event handler
     function onKeyDown(e) 
     {
@@ -667,12 +710,11 @@
             }
             
             // Grow for demonstration purposes *****CHEATS!!!!*****
-            if (e.keyCode == 16) {
-                snake.grow();
-            }
+            CHEATScoreAndLeght(e);
         }
     }
-    
+       
+        
     // Get the mouse position
     function getMousePos(canvas, e)
     {
