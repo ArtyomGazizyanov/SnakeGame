@@ -4,7 +4,7 @@
     $leaderboarddepth = 17;
     $total = countRowsMysql("SELECT COUNT(*) FROM `table`");
     //s print_r ($total);
-    include('../one_player_game_table.html');   
+    include('../template/one_player_game_table.html');   
     if ($total <= $leaderboarddepth)
     {
         $scores = dbQueryGetResult("SELECT `username`, `best_score` FROM `users_info` ORDER By `best_score` DESC LIMIT $leaderboarddepth");

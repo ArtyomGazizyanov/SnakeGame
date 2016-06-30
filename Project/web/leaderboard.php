@@ -1,5 +1,5 @@
 <?php
-        include('../headerleaderboard.html');
+        include('../template/headerleaderboard.html');
         require_once('../include/database.inc.php');
         $leaderboarddepth = 10;
         $total = countRowsMysql("SELECT COUNT(*) FROM `table`");
@@ -15,4 +15,4 @@
                 echo "<td>" . $data['best_score'] . "</td></tr>";
            }
         }
-        include('../footerleaderboard.html');  
+        include('../template/footerleaderboard.html');  

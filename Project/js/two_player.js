@@ -1,14 +1,10 @@
-
+    function onePlayerGameplay() {
     // Get the canvas and context
     var canvas = document.getElementById("canvas"); 
     var context = canvas.getContext("2d");
         
     context.font = '68px Lasco-Boldr';
-
-    var playerId = null;
-    //sockets are ready
-    initSocket();
-    
+        
     // Timing and frames per second
     var lastframe = 0;
     var fpstime = 0;
@@ -18,42 +14,15 @@
     var backgroundColorWall = "#000"
     var firststartgame = true;
     var initialized = false;
-    var appleCount = 0;
-    var snakes = []; 
     
-    // Images       
+    // Images
     var images = [];
     var tileimage;
-    var g_timerToStartAfterDeath = 4000;
     
     // Image loading global variables
     var loadcount = 0;
     var loadtotal = 0;
     var preloaded = false;
-
-    function init()
-    {
-        
-        alert('player id ' + playerId);
-        // Load images
-        images = loadImages(["img/snake-graphics.png"]);
-        tileimage = images[0];
-    
-        // Add mouse events
-        canvas.addEventListener("mousedown", onMouseDown);
-        
-        // Add keyboard events
-        document.addEventListener("keydown", onKeyDown);        
-        
-        
-        // New game
-       // newGame();
-       // snake.changeGameover(true);
-        //gameover = true;
-        
-        // Enter main loop
-        main(0);
-    }
     
     // Load images
     function loadImages(imagefiles) 
@@ -138,8 +107,15 @@
         this.init(0, 0, 1, 10, 1);
     }
     
+    // Snake
+    var SnakeEnemy = function() 
+    {
+        this.init(0, 0, 1, 10, 1);
+    }
+    
     // Direction table: Up, Right, Down, Left
     Snake.prototype.directions = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+    SnakeEnemy.prototype.directions = [[0, -1], [1, 0], [0, 1], [-1, 0]];
     
     // Initialize the snake at a location
     Snake.prototype.init = function(x, y, direction, speed, numsegments) 
@@ -150,11 +126,23 @@
         this.speed = speed;         // Movement speed in blocks per second
         this.movedelay = 0;
         
-        //init gameover
-        this.gameover = true;
-            
-        //init score
-        this.score = 0;        
+        // Reset the segments and add new ones
+        this.segments = [];
+        this.growsegments = 0;
+        for (var i=0; i<numsegments; i++) 
+        {
+            this.segments.push({x:this.x - i*this.directions[direction][0],
+                                y:this.y - i*this.directions[direction][1]});
+        }
+    }
+    SnakeEnemy.prototype.init = function(x, y, direction, speed, numsegments) 
+    {
+        this.x = x;
+        this.y = y;
+        this.direction = direction; // Up, Right, Down, Left
+        this.speed = speed;         // Movement speed in blocks per second
+        this.movedelay = 0;
+        
         // Reset the segments and add new ones
         this.segments = [];
         this.growsegments = 0;
@@ -170,17 +158,11 @@
     {
         this.growsegments++;
     };
-    
-    Snake.prototype.growScore = function() 
+    SnakeEnemy.prototype.grow = function() 
     {
-        this.score++;
+        this.growsegments++;
     };
     
-    Snake.prototype.changeGameover = function(value)
-    {
-        this.gameover = value;
-    }
-
     // Check we are allowed to move
     Snake.prototype.tryMove = function(dt) 
     {
@@ -192,8 +174,26 @@
         }
         return false;
     };
+        
+    SnakeEnemy.prototype.tryMove = function(dt) 
+    {
+        this.movedelay += dt;
+        var maxmovedelay = 1 / this.speed;
+        if (this.movedelay > maxmovedelay) 
+        {
+            return true;
+        }
+        return false;
+    };
+    
     // Get the position of the next move
     Snake.prototype.nextMove = function() 
+    {
+        var nextx = this.x + this.directions[this.direction][0];
+        var nexty = this.y + this.directions[this.direction][1];
+        return {x:nextx, y:nexty};
+    }
+    SnakeEnemy.prototype.nextMove = function() 
     {
         var nextx = this.x + this.directions[this.direction][0];
         var nexty = this.y + this.directions[this.direction][1];
@@ -234,34 +234,78 @@
         // Reset movedelay
         this.movedelay = 0;
     }
+    SnakeEnemy.prototype.move = function()
+    {
+        // Get the next move and modify the position
+        var nextmove = this.nextMove();
+        this.x = nextmove.x;
+        this.y = nextmove.y;
+    
+        // Get the position of the last segment
+        var lastseg = this.segments[this.segments.length-1];
+        var growx = lastseg.x;
+        var growy = lastseg.y;
+    
+        // Move segments to the position of the previous segment
+        for (var i=this.segments.length-1; i>=1; i--) 
+        {
+            this.segments[i].x = this.segments[i-1].x;
+            this.segments[i].y = this.segments[i-1].y;
+        }
+        
+        // Grow a segment if needed
+        if (this.growsegments > 0) 
+        {
+            this.segments.push({x:growx, y:growy});
+            this.growsegments--;
+        }
+        
+        // Move the first segment
+        this.segments[0].x = this.x;
+        this.segments[0].y = this.y;
+        
+        // Reset movedelay
+        this.movedelay = 0;
+    }
     // Create objects
     var snake = new Snake();
-    var snakeEnemy = new Snake();
-    if (playerId == 0)
-    {
-        snakes.push(snake, snakeEnemy);
-        alert('create a snakes');
-    }
-
+    var snakeEnemy = new SnakeEnemy();
     var level = new Level(30, 19, 32, 32);
     
     // Variables
-   // var score = 0;              // Score
-    //   var scoreEnemy = 0;
-    //var snakes[playerId].gameover = true;        // Game is over
-    var gameover = true
+    var score = 0;              // Score
+    var scoreEnemy = 0;
+    var gameover = true;        // Game is over
     var gameovertime = 1;       // How long we have been game over
-    var gameoverdelay = 3;    // Waiting time after game over
+    var gameoverdelay = 0.5;    // Waiting time after game over
     
     // Initialize the game
+    function init()
+    {
+        // Load images
+        images = loadImages(["img/snake-graphics.png"]);
+        tileimage = images[0];
     
+        // Add mouse events
+        canvas.addEventListener("mousedown", onMouseDown);
+        
+        // Add keyboard events
+        document.addEventListener("keydown", onKeyDown);        
+        
+        
+        // New game
+        newGame();
+        gameover = true;
+    
+        // Enter main loop
+        main(0);
+    }
     
     // Check if we can start a new game
     function tryNewGame() {
         if (gameovertime > gameoverdelay) 
         {
             newGame();
-           // snakes[playerId].changeGameover(false);
             gameover = false;
             if (firststartgame)
             {
@@ -274,39 +318,56 @@
     {
         // Initialize the snake
         snake.init(5, 10, 1, 10, 4);
-        
-        snakeEnemy.init(24, 10, 3, 10, 4);      
-        
-        if (firststartgame)
-        {
-            snakes.push(snake, snakeEnemy);
-        }
+        snakeEnemy.init(24, 10, 3, 10, 4);
         
         // Generate the default level
         level.generate();
         
         // Add an apple
-        if ((playerId % 2) ==0)
-        {
-            addApple();
-        }        
+        addApple();
         
         // Initialize the score
-        snakes[playerId].score = 0;       
+        score = 0;
         
         // Initialize variables
-        //snakes[playerId].change(false);
         gameover = false;
     }
     
-
-    // delete apple everywhere
-
     // Add an apple to the level at an empty position
     function addApple()
-    {            
-        socket.emit('createXYapple', snakes, level);
-       // appleCount++;
+    {
+        // Loop until we have a valid apple
+        var valid = false;
+        while (!valid) 
+        {
+            // Get a random position
+            var ax = randRange(0, level.columns-1);
+            var ay = randRange(0, level.rows-1);
+            
+            // Make sure the snake doesn't overlap the new apple
+            var overlap = false;
+            for (var i=0; i<snake.segments.length; i++
+                ) {
+                // Get the position of the current snake segment
+                var sx = snake.segments[i].x;
+                var sy = snake.segments[i].y;
+                
+                // Check overlap
+                if (ax == sx && ay == sy)
+                {
+                    overlap = true;
+                    break;
+                }
+            }
+            
+            // Tile must be empty
+            if (!overlap && level.tiles[ax][ay] == 0)
+            {
+                // Add an apple at the tile position
+                level.tiles[ax][ay] = 2;
+                valid = true;
+            }
+        }
     }
         
     function sendScoreAfterDeath(score)
@@ -386,11 +447,6 @@
             updateGame(dt);
         } else 
         {
-//            if ((dt % 1000) == 0)
-//            {
-//                setTimeout(changeTimer(g_timerToStartAfterDeath), 1000);
-//                console.log('second!')
-//            }
             gameovertime += dt;
         }
     }
@@ -398,7 +454,7 @@
     function updateGame(dt)
     {
         // Move the snake
-        if (snake.tryMove(dt) || snakeEnemy.tryMove(dt))
+        if (snake.tryMove(dt))
         {
             // Check snake collisions
             
@@ -407,40 +463,30 @@
             var nx = nextmove.x;
             var ny = nextmove.y;
             
-            var nextmoveEnemy = snakeEnemy.nextMove();
-            var nxEnemy = nextmoveEnemy.x;
-            var nyEnemy = nextmoveEnemy.y;
-            
-            if ((nx >= 0 && nx < level.columns && ny >= 0 && ny < level.rows) && (nxEnemy >= 0 && nxEnemy < level.columns && nyEnemy >= 0 && nyEnemy < level.rows))
-            {
-                if ((level.tiles[nx][ny] == 1) || (level.tiles[nxEnemy][nyEnemy] == 1))
+            if (nx >= 0 && nx < level.columns && ny >= 0 && ny < level.rows) {
+                if (level.tiles[nx][ny] == 1)
                 {
                     // Collision with a wall
-                    //snakes[playerId].changeGameover(true);
                     gameover = true;
-                    socket.emit('sendGameover', gameover);
-                   // sendScoreAfterDeath(score);
-                   // renewScoreAndLeaderPosition(score);
+                    sendScoreAfterDeath(score);
+                    renewScoreAndLeaderPosition(score);
                 }
                 
                 // Collisions with the snake itself
-                for (var j = 0; j < snakes.length; j++)
+                for (var i=0; i<snake.segments.length; i++)
                 {
-                    for (var i=0; i < snakes[j].segments.length; i++)
-                    {   
-                        var sx = snakes[j].segments[i].x;
-                        var sy = snakes[j].segments[i].y;
-                        
-                        if ((nx == sx && ny == sy) || (nxEnemy == sx && nyEnemy == sy))
-                        {
-                            // Found a snake part
-                           // snakes[playerId].changeGameover(true);
-                            gameover = true;
-                            socket.emit('sendGameover', gameover);
-                        //   sendScoreAfterDeath(score);
-                        //   renewScoreAndLeaderPosition(score);
-                            break;
-                        }
+                    var sx = snake.segments[i].x;
+                    var sy = snake.segments[i].y;
+                    var sxEnemy = snakeEnemy.segments[i].x;
+                    var syEnemy = snakeEnemy.segments[i].y;
+                    
+                    if ((nx == sx && ny == sy) || (nx == sxEnemy && ny == syEnemy))
+                    {
+                        // Found a snake part
+                        gameover = true;
+                        sendScoreAfterDeath(score);
+                        renewScoreAndLeaderPosition(score);
+                        break;
                     }
                 }
                 
@@ -450,54 +496,101 @@
 
                     // Move the snake
                     snake.move();
-                    snakeEnemy.move();
+                    
                     // Check collision with an apple
-                    if (level.tiles[nx][ny] == 2)
+                    if (level.tiles[nx][ny] == 2) 
                     {
-                        // Remove the apple                        
-                        socket.emit('deleteXYapple', level, nx, ny);
+                        // Remove the apple
+                        level.tiles[nx][ny] = 0;
                         
-                        // Add a new apple                        
-                        if ((playerId % 2) ==0)
-                        {
-                            addApple();
-                        }  
+                        // Add a new apple
+                        addApple();
                         
                         // Grow the snake
                         snake.grow();
                         
                         // Add a point to the score
-                        snake.growScore;
-                        
-                  //  socket.emit('playerAteApple', {playerId: snakes[playerId].playerId, growscore: snakes[playerId].growscore});
-                    } else if (level.tiles[nxEnemy][nyEnemy] == 2)
-                    {
-                        // Remove the apple
-                        level.tiles[nxEnemy][nyEnemy] = 0;
-                        
-                        // Add a new apple
-                        if ((playerId % 2) ==0)
-                        {
-                            addApple();
-                        }  
-                        
-                        // Grow the snake
-                        snakeEnemy.grow();
-                        
-                        // Add a point to the score
-                       // scoreEnemy++;
-                    }  
-                    
+                        score++;
+                    }                    
 
                 }
             } else
             {
                 // Out of bounds
-                //snakes[playerId].changeGameover(true);
                 gameover = true;
-                socket.emit('sendGameover', gameover);
                 //sendScoreAfterDeath(score);
                 //renewScoreAndLeaderPosition(score);
+            }
+            
+            if (gameover) 
+            {
+                gameovertime = 0;
+            }
+        }
+        if (snakeEnemy.tryMove(dt))
+        {
+            // Check snake collisions
+            
+            // Get the coordinates of the next move
+            var nextmove = snakeEnemy.nextMove();
+            var nx = nextmove.x;
+            var ny = nextmove.y;
+            
+            if (nx >= 0 && nx < level.columns && ny >= 0 && ny < level.rows) {
+                if (level.tiles[nx][ny] == 1)
+                {
+                    // Collision with a wall
+                    gameover = true;
+                    //sendScoreAfterDeath(score);
+                    //renewScoreAndLeaderPosition(score);
+                }
+                
+                // Collisions with the snake itself
+                for (var i=0; i<snakeEnemy.segments.length; i++)
+                {
+                    var sx = snakeEnemy.segments[i].x;
+                    var sy = snakeEnemy.segments[i].y;
+                    
+                    if (nx == sx && ny == sy) 
+                    {
+                        // Found a snake part
+                        gameover = true;
+                       // sendScoreAfterDeath(score);
+                       // renewScoreAndLeaderPosition(score);
+                        break;
+                    }
+                }
+                
+                if (!gameover) 
+                {
+                    // The snake is allowed to move
+
+                    // Move the snake
+                    snakeEnemy.move();
+                    
+                    // Check collision with an apple
+                    if (level.tiles[nx][ny] == 2) 
+                    {
+                        // Remove the apple
+                        level.tiles[nx][ny] = 0;
+                        
+                        // Add a new apple
+                        addApple();
+                        
+                        // Grow the snake
+                        snakeEnemy.grow();
+                        
+                        // Add a point to the score
+                        scoreEnemy++;
+                    }                    
+
+                }
+            } else
+            {
+                // Out of bounds
+                gameover = true;
+               // sendScoreAfterDeath(score);
+               // renewScoreAndLeaderPosition(score);
             }
             
             if (gameover) 
@@ -531,14 +624,6 @@
         context.fillStyle = "#00F";
         context.fillText("SCORE: " + score, 35, 50);
     }
-
-    function drawSnakes()
-    {
-        for(var i = 0; i < snakes.length; i++)
-        {
-            drawSnake(snakes[i]);
-        }
-    }
     
     
     // Render the game
@@ -547,8 +632,9 @@
         
         
         drawLevel();
-        drawSnakes();
-        drawScore(snake.score);        
+        drawSnake();
+        drawSnakeEnemy();
+        drawScore(score);        
         
         //Game over
         if (gameover)
@@ -556,42 +642,28 @@
             context.fillStyle = "rgba(0, 0, 0, 0.5)";
             context.fillRect(0, 0, canvas.width, canvas.height);
             
-//            if (firststartgame)
-//            {
-//                context.fillStyle = "#fff";
-//                context.font = "40px Lasco-Bold";
-//                drawCenterText("Press any key", 0, canvas.height/2, canvas.width);
-//                drawCenterText("When you are ready to start", 0, canvas.height/1.7, canvas.width);
-//            } else
-//            {            
+            if (firststartgame)
+            {
+                context.fillStyle = "#fff";
+                context.font = "40px Lasco-Bold";
+                drawCenterText("Press any key", 0, canvas.height/2, canvas.width);
+                drawCenterText("When you are ready to start", 0, canvas.height/1.7, canvas.width);
+            } else
+            {            
                 context.fillStyle = backgroundColor;
                 context.fillStyle = "#E8000C";
-                context.font = "45px Lasco-Bold";  
-                changeTimer();
-                timerToStartNewGame = Math.floor(g_timerToStartAfterDeath / 1000);
-                drawCenterText("Game starts in " + timerToStartNewGame, 0, canvas.height/4, canvas.width);
+                context.font = "45px Lasco-Bold";
+                drawCenterText("Sorry you died", 0,     canvas.height/4, canvas.width);
                 context.fillStyle = "#00F";
-                drawCenterText("SCORE: " + snakes[playerId].score, 0, 2*canvas.height/4, canvas.width);
+                drawCenterText("SCORE: " + score, 0,    2*canvas.height/4, canvas.width);
                 context.fillStyle = "#fff";
                 context.font = "24px Lasco-Bold";
-                drawCenterText("Press any key to start!", 0, 3 * canvas.height/4, canvas.width);
-                if (timerToStartNewGame == 0)
-                {
-                    socket.emit("startNewGame", timerToStartNewGame);
-                }                    
+                drawCenterText("Press any key to start!", 0,    3*canvas.height/4, canvas.width);
                 //sendScoreAfterDeath(score);              
-           // }            
+            }            
         }
     }
     
-    function changeTimer()
-    {
-        if (g_timerToStartAfterDeath > 0)
-        {
-            g_timerToStartAfterDeath = g_timerToStartAfterDeath - 10;
-        }       
-    }
-
     // Draw the level tiles
     function drawLevel()
     {
@@ -633,10 +705,10 @@
     }
     
     // Draw the snake
-    function drawSnake(snake) 
+    function drawSnake() 
     {
         // Loop over every snake segment
-        for (var i=0; i< snake.segments.length; i++)
+        for (var i=0; i<snake.segments.length; i++)
         {
             var segment = snake.segments[i];
             var segx = segment.x;
@@ -729,22 +801,129 @@
             // Draw the image of the snake part
             context.drawImage(tileimage, tx*64, ty*64, 64, 64, tilex, tiley, level.tilewidth, level.tileheight);
         }
-    }    
+    }
+    function drawSnakeEnemy() 
+    {
+        // Loop over every snake segment
+        for (var i=0; i< snakeEnemy.segments.length; i++)
+        {
+            var segment = snakeEnemy.segments[i];
+            var segx = segment.x;
+            var segy = segment.y;
+            var tilex = segx*level.tilewidth;
+            var tiley = segy*level.tileheight;
+            
+            // Sprite column and row that gets calculated
+            var tx = 0;
+            var ty = 0;
+            
+            if (i == 0)
+            {
+                // Head; Determine the correct image
+                var nseg = snakeEnemy.segments[i+1]; // Next segment
+                if (segy < nseg.y)
+                {
+                    // Up
+                    tx = 3; 
+                    ty = 0;
+                } else if (segx > nseg.x)
+                {
+                    // Right
+                    tx = 4; 
+                    ty = 0;
+                } else if (segy > nseg.y)
+                {
+                    // Down
+                    tx = 4; 
+                    ty = 1;
+                } else if (segx < nseg.x)
+                {
+                    // Left
+                    tx = 3;
+                    ty = 1;
+                }
+            } else if (i == snakeEnemy.segments.length-1)
+              {
+                // Tail; Determine the correct image
+                var pseg = snakeEnemy.segments[i-1]; // Prev segment
+                if (pseg.y < segy) {
+                    // Up
+                    tx = 3; ty = 2;
+                } else if (pseg.x > segx) 
+                {
+                    // Right
+                    tx = 4; ty = 2;
+                } else if (pseg.y > segy) 
+                {
+                    // Down
+                    tx = 4; ty = 3;
+                } else if (pseg.x < segx)
+                {
+                    // Left
+                    tx = 3; ty = 3;
+                }
+            } else {
+                // Body; Determine the correct image
+                var pseg = snakeEnemy.segments[i-1]; // Previous segment
+                var nseg = snakeEnemy.segments[i+1]; // Next segment
+                if (pseg.x < segx && nseg.x > segx || nseg.x < segx && pseg.x > segx) 
+                {
+                    // Horizontal Left-Right
+                    tx = 1;
+                    ty = 0;
+                } else if (pseg.x < segx && nseg.y > segy || nseg.x < segx && pseg.y > segy)
+                {
+                    // Angle Left-Down
+                    tx = 2;
+                    ty = 0;
+                } else if (pseg.y < segy && nseg.y > segy || nseg.y < segy && pseg.y > segy)
+                {
+                    // Vertical Up-Down
+                    tx = 2;
+                    ty = 1;
+                } else if (pseg.y < segy && nseg.x < segx || nseg.y < segy && pseg.x < segx)
+                {
+                    // Angle Top-Left
+                    tx = 2;
+                    ty = 2;
+                } else if (pseg.x > segx && nseg.y < segy || nseg.x > segx && pseg.y < segy) 
+                {
+                    // Angle Right-Up
+                    tx = 0;
+                    ty = 1;
+                } else if (pseg.y > segy && nseg.x > segx || nseg.y > segy && pseg.x > segx)
+                {
+                    // Angle Down-Right
+                    tx = 0;
+                    ty = 0;
+                }
+            }
+            
+            // Draw the image of the snake part
+            context.drawImage(tileimage, tx*64, ty*64, 64, 64, tilex, tiley,
+                              level.tilewidth, level.tileheight);
+        }
+    }
     
     // Draw text that is centered
     function drawCenterText(text, x, y, width)
     {
         var textdim = context.measureText(text);
         context.fillText(text, x + (width-textdim.width)/2, y);
-    }   
+    }
+    
+    // Get a random int between low and high, inclusive
+    function randRange(low, high) 
+    {
+        return Math.floor(low + Math.random()*(high-low+1));
+    }
     
     // Mouse event handlers
-    function onMouseDown(e)
-    {
+    function onMouseDown(e) {
         // Get the mouse position
         var pos = getMousePos(canvas, e);
         
-        if ((gameover) && (g_timerToStartAfterDeath == 0))
+        if (gameover)
         {
             // Start a new game
             tryNewGame();
@@ -756,15 +935,15 @@
     {
         if (e.keyCode == 16) 
         {
-            snakes[playerId].grow();
-            snakes[playerId].growScore();
+            snake.grow();
+            score++;
         }   
     }
     
     // Keyboard event handler
     function onKeyDown(e) 
     {
-        if ((gameover) && (g_timerToStartAfterDeath == 0))
+        if (gameover) 
         {
             tryNewGame();
         } else 
@@ -772,37 +951,62 @@
             if (e.keyCode == 37 || e.keyCode == 65) 
             {
                 // Left or A
-                if (snakes[playerId].direction != 1)
+                if (snake.direction != 1)
                 {
-                    //snakes[playerId].direction = 3;
-                    console.log(playerId);
-                    socket.emit('playerLeftKeyDown', {playerId: snakes[playerId].playerId, direction: snakes[playerId].direction});
+                    snake.direction = 3;
                 }
             } else if (e.keyCode == 38 || e.keyCode == 87)
             {
                 // Up or W
-                if (snakes[playerId].direction != 2)  
+                if (snake.direction != 2)  
                 {
-                   // snakes[playerId].direction = 0;
-                    socket.emit('playerUpKeyDown', {playerId: snakes[playerId].playerId, direction: snakes[playerId].direction});
+                    snake.direction = 0;
                 }
             } else if (e.keyCode == 39 || e.keyCode == 68)
             {
                 // Right or D
-                if (snakes[playerId].direction != 3)  
+                if (snake.direction != 3)  
                 {
-                  //  snakes[playerId].direction = 1;
-                    socket.emit('playerRightKeyDown', {playerId: snakes[playerId].playerId, direction: snakes[playerId].direction});
+                    snake.direction = 1;
                 }
             } else if (e.keyCode == 40 || e.keyCode == 83)
             {
                 // Down or S
-                if (snakes[playerId].direction != 0)  
+                if (snake.direction != 0)  
                 {
-                   // snakes[playerId].direction = 2;
-                    socket.emit('playerDownKeyDown', {playerId: snakes[playerId].playerId, direction: snakes[playerId].direction});
+                    snake.direction = 2;
                 }
             }
+             if (e.keyCode == 75) 
+            {
+                // Left or A
+                if (snakeEnemy.direction != 1)
+                {
+                    snakeEnemy.direction = 3;
+                }
+            } else if (e.keyCode == 79)
+            {
+                // Up or W
+                if (snakeEnemy.direction != 2)  
+                {
+                    snakeEnemy.direction = 0;
+                }
+            } else if (e.keyCode == 186)
+            {
+                // Right or D
+                if (snakeEnemy.direction != 3)  
+                {
+                    snakeEnemy.direction = 1;
+                }
+            } else if (e.keyCode == 76)
+            {
+                // Down or S
+                if (snakeEnemy.direction != 0)  
+                {
+                    snakeEnemy.direction = 2;
+                }
+            }
+            
             // Grow for demonstration purposes *****CHEATS!!!!*****
             CHEATScoreAndLeght(e);
         }
@@ -821,4 +1025,10 @@
     
     // Call init to start the game
        init();
-//window.onload()
+    
+};
+
+window.onload = function()
+{
+    onePlayerGameplay();
+}
