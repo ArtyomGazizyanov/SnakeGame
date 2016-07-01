@@ -8,7 +8,7 @@
 
 #playerName
 {
-    margin: 0px auto; 
+    margin: 0px auto;
     text-align: left;
     font-family: Lasco-Bold;
 }
@@ -27,19 +27,19 @@ p
 
 .input_playername_label
 {
-    text-align:  center;    
+    text-align:  center;
     text-transform: uppercase;
 }
 
 .container_canvas
-{    
+{
     margin: 0 0 0 1%;
     width: 72%;
     float: left;
 }
 
 form
-{    
+{
     text-align: center;
 }
 
@@ -51,7 +51,7 @@ form
 .container
 {
     font-family: Lasco-Bold;
-    margin: 0 auto; 
+    margin: 0 auto;
     border: 3px solid black;
     border-radius:  50px ;
     width: 50%;

@@ -14,10 +14,8 @@ var backgroundColorWall = "#000"
 var firststartgame = true;
 var initialized = false;
 
-var appleCount = 0;
-var gameStarted = false;
-//only the first player is able to create array with snakes
-var g_snakeCreated = false;
+var gameovertime = 1;       // How long we have been game over
+var gameoverdelay = 3;    // Waiting time after game over   
 
 // Images
 var images = [];
@@ -28,8 +26,6 @@ var g_timerToStartAfterDeath = 4000;
 var loadcount = 0;
 var loadtotal = 0;
 var preloaded = false;
-
-
 
 function drawWaitingScreen()
 {

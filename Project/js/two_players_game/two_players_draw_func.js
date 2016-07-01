@@ -1,16 +1,17 @@
-function drawScore(score)
+function drawScore(scoreFrstplayer, scoreScndplayer)
 {
     context.fillStyle = backgroundColor;
     context.font = "24px Lasco-Bold";
     context.fillStyle = "#00F";
-    context.fillText("SCORE: " + score, 35, 50);
+    context.fillText("SCORE: " + scoreFrstplayer, 35, 50);
+    context.fillText("SCORE: " + scoreScndplayer, 790, 50);
 }
 
 function drawSnakes()
 {
-    for(var i = 0; i < snakes.length; i++)
+    for(var i = 0; i < g_snakes.length; i++)
     {
-        drawSnake(snakes[i]);
+        drawSnake(g_snakes[i]);
     }
 }
 
@@ -57,7 +58,7 @@ function drawLevel()
 // Draw the snake
 function drawSnake(snake) 
 {
-    // Loop over every snake segment
+    // Loop over every g_snakes[playerId] segment
     for (var i=0; i< snake.segments.length; i++)
     {
         var segment = snake.segments[i];
@@ -149,7 +150,7 @@ function drawSnake(snake)
                 ty = 0;
             }
         }
-        // Draw the image of the snake part
+        // Draw the image of the g_snakes[playerId] part
         context.drawImage(tileimage, tx*64, ty*64, 64, 64, tilex, tiley, level.tilewidth, level.tileheight);
     }
 }    
@@ -159,4 +160,4 @@ function drawCenterText(text, x, y, width)
 {
     var textdim = context.measureText(text);
     context.fillText(text, x + (width-textdim.width)/2, y);
-}   
+}

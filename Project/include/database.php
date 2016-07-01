@@ -3,8 +3,8 @@
     $user = 'root';
     $password  = 'vertrigo';
     $database = 'snake_game';
-    
-    function dbInitialConnect()    
+
+    function dbInitialConnect()
     {
         $dblink = mysql_connect($server, $user, $password);
         if($dblink)
@@ -17,4 +17,3 @@
         else
             die(' База данных не найдена или отсутствует доступ.');
     }
-    

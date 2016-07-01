@@ -4,7 +4,7 @@
     if (isset($_GET['str']))
     {
         $str = $_GET['str'];
-        echo(last($str));    
+        echo(last($str));
     }
     else
     {

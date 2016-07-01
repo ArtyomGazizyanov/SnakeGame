@@ -536,7 +536,7 @@
     {
         for(var i = 0; i < snakes.length; i++)
         {
-            drawSnake(snakes[i]);
+            drawSnake();
         }
     }
     
@@ -544,8 +544,6 @@
     // Render the game
     function render() 
     {
-        
-        
         drawLevel();
         drawSnakes();
         drawScore(snake.score);        

@@ -2,6 +2,8 @@ var  socket = null;
 
 var playerId = null;
 
+var g_snakes = [];
+
 function initSocket()
 {
     socket = io.connect(":3000");
@@ -14,19 +16,20 @@ function initSocket()
             console.log('sockets send back player id = ' + playerId);
             if (playerId == 0)
             { 
-                //init();
-                newGame();                  
-                //экран ожидания
-                //drawWaitingScreen();
-                //snakes.push(snake, snakeEnemy);
-                socket.emit('sendLevel', level);
+                //socket.emit('sendLevel', level);
             }
             else
             {
               // newGame();
-                socket.emit('getLevel');
+               // socket.emit('getLevel');
             }
         }
+    });
+
+
+    socket.on('gameStarted', function()
+    {
+        init();
     });
     socket.on('sendArraySnakes', function(arrayOfSnakes)
     {
@@ -46,10 +49,8 @@ function initSocket()
     
     socket.on('createXYapple', function(object)
     {
-        if (object.playerId == 0)
-        {
-            level.tiles[object.x][object.y] = 2;
-        }
+       // console.log('create apple  from user # ' + playerId);
+        level.tiles[object.x][object.y] = 2;
     });
     
     socket.on('sendGameover', function()
@@ -73,15 +74,18 @@ function initSocket()
     
     socket.on('playerUpKeyDown', function(object)
     {
-        for (var i = 0; i < snakes.length; i++)
+//        console.log(i +'`s player pressed UpKeyDown');
+        //console.log(object.playerId)
+        //console.log(g_snakes)
+        for (var i = 0; i < g_snakes.length; i++)
         {
-            if (object.playerId == snakes[i].playerId)
+            if (object.playerId == g_snakes[i].playerId)
             {
-                if (snakes[i].direction != 2)  
+                if (g_snakes[i].direction != 2)
                 {
-                    snakes[i].direction = 0;
+                    //console.log(g_snakes[i].playerId +'`s player pressed UpKeyDown');
+                    g_snakes[i].direction = 0;
                 }
-                console.log(i +'`s player pressed UpKeyDown');
                 break;
             }
         }
@@ -89,15 +93,16 @@ function initSocket()
 
     socket.on('playerRightKeyDown', function(object)
     {
-        for (var i = 0; i < snakes.length; i++)
+        //console.log(object.playerId)
+        for (var i = 0; i < g_snakes.length; i++)
         {
-            if (object.playerId == snakes[i].playerId)
+            if (object.playerId == g_snakes[i].playerId)
             {
-                if (snakes[i].direction != 3)  
+                if (g_snakes[i].direction != 3 )
                 {
-                    snakes[i].direction = 1;
+                    //console.log(g_snakes[i].playerId +'`s player pressed RightKeyDown');
+                    g_snakes[i].direction = 1;
                 }
-                console.log(i +'`s player pressed RightKeyDown');
                 break;
             }
         }
@@ -105,16 +110,17 @@ function initSocket()
 
     socket.on('playerDownKeyDown', function(object)
     {
-        for (var i = 0; i < snakes.length; i++)
+       // console.log(object.playerId)
+        for (var i = 0; i < g_snakes.length; i++)
         {
-            if (object.playerId == snakes[i].playerId)
+            if (object.playerId == g_snakes[i].playerId)
             {
                  // Down or S
-                if (snakes[i].direction != 0)  
+                if (g_snakes[i].direction != 0)
                 {
-                    snakes[i].direction = 2;
+                   // console.log(g_snakes[i].playerId +'`s player pressed DownKeyDown');
+                    g_snakes[i].direction = 2;
                 }
-                console.log(i +'`s player pressed DownKeyDown');
                 break;
             }
         }
@@ -122,28 +128,31 @@ function initSocket()
 
     socket.on('playerLeftKeyDown', function(object)
     {
-        for (var i = 0; i < snakes.length; i++)
+        //console.log(object.playerId)
+        for (var i = 0; i < g_snakes.length; i++)
         {
-            if (object.playerId == snakes[i].playerId)
+            if (object.playerId == g_snakes[i].playerId)
             {
-                if (snakes[i].direction != 1)
+                if (g_snakes[i].direction != 1)
                 {
-                    snakes[i].direction = 3;
+                    //console.log(g_snakes[i].playerId +'`s player pressed LeftKeyDown');
+                    g_snakes[i].direction = 3;
                 }
-                console.log(i +'`s player pressed LeftKeyDown');
+
                 break;
             }
-        }
+       }
     });
 
     socket.on('playerAteApple', function(object)
     {
-        for (var i = 0; i < snakes.length; i++)
+        console.log('ate!!!!!!!!!!!!!!!');
+        for (var i = 0; i < g_snakes.length; i++)
         {
-            if (object.playerId == snakes[i].playerId)
+            if (object.playerId == g_snakes[i].playerId)
             {
-                snakes[i].growScore;
-                console.log('player with ' + snakes[i].playerId + ' ID ' + 'ate an apple ');
+                g_snakes[i].score++;
+                //console.log('player with ' + g_snakes[i].playerId + ' ID ' + 'ate an apple ');
                 break;
             }
         }

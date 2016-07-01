@@ -1,9 +1,9 @@
     <?php
     function last($str)
-    {   
+    {
        $lastChar = substr($str, strlen($str) - 1);
        return $lastChar;
-    }   
+    }
 
     function withoutLast($str)
     {
@@ -18,7 +18,7 @@
         for($i = $length - 1; $i >= 0; $i--)
         {
             $reverseStr = $reverseStr . $str[$i];
-        }   
+        }
         return $reverseStr;
     }
 
@@ -27,7 +27,7 @@
         $strFirstChar = substr($str, 0, 1);
         return $strFirstChar;
     }
-     
+
     function isInvalidIdentifierSymbol($symbol)
     {
         $isGoodSymbol =  true;
@@ -50,9 +50,9 @@
         $invalidSymbol = false;
         if ((is_numeric(firstStrChar($str))))
         {
-            echo ('Invalid sumbol: ' . ' |' . (firstStrChar($str)) . '| </br>');            
+            echo ('Invalid sumbol: ' . ' |' . (firstStrChar($str)) . '| </br>');
         }
-        for ($i = 1; $i < $length; $i++) 
+        for ($i = 1; $i < $length; $i++)
         {
             if (!(isInvalidIdentifierSymbol($str[$i])))
             {
@@ -62,20 +62,20 @@
             if (($invalidSymbol))
             {
                 echo ('Invalid sumbol: ' . ' |' . ($str[$i]) . '| </br>');
-                $invalidSymbol = false;                
+                $invalidSymbol = false;
             }
-        }   
+        }
         return $isGoodStr;
     }
 
     function isSetStr($str)
     {
         if (isset($_GET[$str]))
-        { 
+        {
             $setStr = $_GET[$str];
         }
         else
-        {   
+        {
             echo('ERROR: Variable str not found, check you input! Please, add this variable to url.').PHP_EOL;
         }
     }
@@ -84,24 +84,24 @@
     {
         $freeSpacesStr = ' ';
         if (!empty($str))
-        {            
+        {
             $i = 1;
             $length = strlen($str);
             while ($i <= $length - 1)
             {
                 while (($str[$i - 1] != ' ') && ($i <= $length - 1))    // собираем слово
-                {  
+                {
                   $freeSpacesStr = $freeSpacesStr . $str[$i - 1];
-                    $i++;    
+                    $i++;
                 }
                 $freeSpacesStr = $freeSpacesStr . $str[$i - 1];
                 $i++;
-            }                  
+            }
         }
         else
         {
             $freeSpacesStr = 'Varible is is empty.';
-        }    
+        }
         return ltrim(rtrim($freeSpacesStr));
     }
 
@@ -117,13 +117,13 @@
             {
                 echo ('Use only english symbols and digits for your password.');
                 return false;
-            }    
+            }
         }
         else
         {
-            echo('Pasword is is empty.');    
+            echo('Pasword is is empty.');
             return false;
-        }    
+        }
     }
 
     function ReliabilityValidPassword($password)
@@ -135,7 +135,7 @@
         $onlyDigit = true;
         $counterRepeatSymbols = 0;
         $counterUpperCaseLetters = 0;
-        $counterLowerCaseLetters = 0;        
+        $counterLowerCaseLetters = 0;
         $paswordReliability = strlen($password) * 4;
         for ($i = 0; $i < strlen($password); $i++)
         {
@@ -144,9 +144,9 @@
                 $onlyDigit = false;
                 if (in_array($password[$i], $unicSymbols))
                 {
-                    $counterRepeatSymbols++;       
+                    $counterRepeatSymbols++;
                 }
-                else 
+                else
                 {
                     array_push($unicSymbols, $password[$i]);
                     if (($password[$i] >= 'A') &&   ($password[$i] <= 'Z'))
@@ -163,9 +163,9 @@
             else
             {
                 $onlyChar = false;
-                $counterDigits++; 
-                //$counterRepeatSymbols++;                   
-            }   
+                $counterDigits++;
+                //$counterRepeatSymbols++;
+            }
         }
         if (($onlyChar)  || ($onlyDigit))
         {
@@ -179,12 +179,12 @@
         if ($counterUpperCaseLetters != 0)
         {
             $counterLowerCaseLetters = (strlen($password) -  $counterLowerCaseLetters) * 2;
-        }        
+        }
 		echo ('paswordReliability = ' . $paswordReliability . '</br>');
 		echo ('counterDigits = ' . $counterDigits . '</br>');
 		echo ('counterUpperCaseLetters = ' . $counterUpperCaseLetters . '</br>');
 		echo ('counterLowerCaseLetters = ' . $counterLowerCaseLetters . '</br>');
 		echo ('counterRepeatSymbols = ' . $counterRepeatSymbols . '</br>');
         $paswordReliability = $paswordReliability + $counterDigits + $counterUpperCaseLetters + $counterLowerCaseLetters - $counterRepeatSymbols;
-        return $paswordReliability;    
+        return $paswordReliability;
     }

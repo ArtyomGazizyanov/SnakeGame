@@ -5,11 +5,11 @@
     src: local(Lasco-Bold), url(fonts/Lasco-Bold.ttf); /* Для остальных браузеров */
 }
 
-a 
-{ 
+a
+{
     text-decoration: none; /* Отменяем подчеркивание у ссылки */
     color: black;
-} 
+}
 
 
 a:visited
@@ -55,7 +55,7 @@ a:visited
     text-align: right;
 }
 
-#onePlayer, 
+#onePlayer,
 #twoPlayer,
 #leaderBoard
 {
@@ -79,7 +79,7 @@ table
     width: 100%;
 }
 
-#onePlayer:hover, 
+#onePlayer:hover,
 #twoPlayer:hover,
 #leaderBoard:hover,
 .back_one_player:hover

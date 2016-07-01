@@ -10,14 +10,14 @@ var Snake = function()
 Snake.prototype.directions = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 
 // Initialize the snake at a location
-Snake.prototype.init = function(x, y, direction, speed, numsegments) 
+Snake.prototype.init = function(x, y, direction, speed, numsegments, id)
 {
     this.x = x;
     this.y = y;
     this.direction = direction; // Up, Right, Down, Left
     this.speed = speed;         // Movement speed in blocks per second
     this.movedelay = 0;
-    
+    this.playerId = id;
     //init gameover
     this.gameover = true;
         
@@ -101,38 +101,6 @@ Snake.prototype.move = function()
     // Reset movedelay
     this.movedelay = 0;
 }
-    
-// Create objects
 
-var snake = new Snake();
-snakes.push(snake);
-snakes.push(snake);
-alert('snakeCreated lenght = ', snakes.length);
-//var snakeEnemy = new Snake();
 
-//function createSnakesArray(array)
-//{    
-//    if (playerId == 0)//!g_snakeCreated || 
-//    {
-//        console.log('playerId when push snakes = ' + playerId);
-//        createSnakesArray(array);
-//        snakes.push...
-//        alert('create a snakes');
-//    }
-//}
-//socket.emit("wasSnakesCreated");
-//
-//setTimeout(createSnakesArray(snakes), 1000)
-//if (!g_snakeCreated)
-//{
-//    console.log('playerId when push snakes = ' + playerId);
-//    snakes.push(snake, snakeEnemy);
-//    alert('create a snakes');
-//}
-
-//if (playerId == 0)//!g_snakeCreated || 
-//{
-//    console.log('playerId when push snakes = ' + playerId);
-//    setTimeout(createSnakesArray(snakes), 2000);
-//    alert('create a snakes');
-//}
+//alert('snakeCreated lenght = ', snakes.length);
