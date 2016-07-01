@@ -125,7 +125,7 @@
             return false;
         }
     }
-
+    
     function ReliabilityValidPassword($password)
     {
         $paswordReliability = 0;

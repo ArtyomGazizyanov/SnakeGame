@@ -82,7 +82,8 @@ table
 #onePlayer:hover,
 #twoPlayer:hover,
 #leaderBoard:hover,
-.back_one_player:hover
+.back_one_player:hover,
+.back_two_player:hover
 {
     background-color: black;
     color: red;
@@ -96,7 +97,8 @@ table
     font-size: 166%;
 }
 
-.back_one_player
+.back_one_player,
+.back_two_player
 {
     float: left;
     text-align: center;
@@ -108,3 +110,5 @@ table
     padding: 22px;
     margin: 10px auto 0 auto;
 }
+
+
