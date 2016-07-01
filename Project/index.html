@@ -11,13 +11,15 @@
         <h1 class="header_itle">welcome to the snake</h1>  
         <form action="web/handler.php">
           <label><p class="input_playername_label">Name of a hero</p> 
-            <input id="playerName" name="username" pattern="[a-zA-Z]{2,64}" required title="Allowed only letters" type="text" /> 
+            <input id="playerName" name="username" pattern="[a-zA-Z]{2,11}" required title="Allowed only latin letters/ Min 2 letters in username" maxlength = "11" type="text" /> 
           </label>
-          <a href="index.html"><p><input class="send_button"   type="submit" value="go!"></p> </a>
+          <a href="index.html"><p><input class="send_button"   type="submit" value="go!" onsubmit="return (ValidUsername())"></p></a>
         </form>
+        <span id="message"></span>
       </div>
     </div>
       <script src="js/index.js" type="text/javascript"></script>
+      <script src="js/validUsername.js" type="text/javascript"></script>
   </body>
 </html>
 

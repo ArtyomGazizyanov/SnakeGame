@@ -204,7 +204,7 @@
     function init()
     {
         // Load images
-        images = loadImages(["img/snake-graphics.png"]);
+        images = loadImages(["../img/snake-graphics.png"]);
         tileimage = images[0];
     
         // Add mouse events
@@ -294,7 +294,7 @@
     {
         $.ajax(
         {
-            url: "web/one_player.php?score=" + score + "",          
+            url: "../web/one_player.php?score=" + score + "",          
             success: function(data){/*console.log(data);*/}
         });
         //console.log(score);
@@ -305,13 +305,13 @@
         $("#userBestScore").empty();
         $.ajax(
         {
-            url: "web/get_best_score_curr_player.php",    
+            url: "../web/get_best_score_curr_player.php",    
             success: function(data){$("#userBestScore").append(data);}
         });
         $("#leaderTable").empty();
         $.ajax(
         {
-            url: "web/rewrite_one_player_leaderboard.php",    
+            url: "../web/rewrite_one_player_leaderboard.php",    
             success: function(data){$("#leaderTable").append(data);}
         });
     }
